@@ -26,11 +26,11 @@ function SocketFactory($rootScope) {
 SocketFactory.$inject = ['$rootScope'];
 
 app.factory('socketConnector', SocketFactory);
-function StickyNoteDirective(socket) {
+function StickyNoteDirective(socketConnector) {
   var linker = function (scope, element, attrs) {
     element.draggable({
       stop: function (event, ui) {
-        socket.emit('moveNote', {
+        socketConnector.emit('moveNote', {
           id: scope.note.id,
           x: ui.position.left,
           y: ui.position.top
@@ -38,7 +38,7 @@ function StickyNoteDirective(socket) {
       }
     });
 
-    socket.on('onNoteMoved', function (data) {
+    socketConnector.on('onNoteMoved', function (data) {
       // Update if the same note
       if (data.id == scope.note.id) {
         element.animate({
@@ -56,7 +56,7 @@ function StickyNoteDirective(socket) {
 
   var controller = function ($scope) {
     // Incoming
-    socket.on('onNoteUpdated', function (data) {
+    socketConnector.on('onNoteUpdated', function (data) {
       // Update if the same note
       if (data.id == $scope.note.id) {
         $scope.note.title = data.title;
@@ -66,7 +66,7 @@ function StickyNoteDirective(socket) {
 
     // Outgoing
     $scope.updateNote = function (note) {
-      socket.emit('updateNote', note);
+      socketConnector.emit('updateNote', note);
     };
 
     $scope.deleteNote = function (id) {
@@ -87,7 +87,7 @@ function StickyNoteDirective(socket) {
   };
 }
 
-StickyNoteDirective.$inject = ['socket'];
+StickyNoteDirective.$inject = ['socketConnector'];
 
 app.directive('stickyNote', StickyNoteDirective);
 function MainCtrl($scope, socketConnector) {

@@ -8,21 +8,21 @@
  * dependencies, mixins, variables, resets, etc. before other stylesheets)
  *
  * For usage docs see:
- * 		https://github.com/gruntjs/grunt-contrib-less
+ *    https://github.com/gruntjs/grunt-contrib-less
  */
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
-	grunt.config.set('less', {
-		dev: {
-			files: [{
-				expand: true,
-				cwd: 'front/styles/',
-				src: ['app.less'],
-				dest: 'public/css/',
-				ext: '.css'
-			}]
-		}
-	});
+  grunt.config.set('less', {
+    dev: {
+      files: [{
+        expand: true,
+        cwd: 'front/styles/',
+        src: ['app.less'],
+        dest: 'public/css/',
+        ext: '.css'
+      }]
+    }
+  });
 
-	grunt.loadNpmTasks('grunt-contrib-less');
+  grunt.loadNpmTasks('grunt-contrib-less');
 };
