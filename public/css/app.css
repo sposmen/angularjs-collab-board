@@ -1,21 +1,18 @@
 body {
-	background: url(/images/bg_corkboard.jpg) top left repeat fixed;
+  background: url(/images/bg_corkboard.jpg) top left repeat fixed;
 }
-
 .sticky-note {
-	position: absolute;
+  position: absolute;
 }
-
 .sticky-note .title {
-	background: transparent;
-	border: none;
-	display: block;
-	font-size: 20px;
-	font-weight: bold;
+  background: transparent;
+  border: none;
+  display: block;
+  font-size: 20px;
+  font-weight: bold;
 }
-
 .sticky-note .body {
-	background: transparent;
-	border: none;
-	display: block;
+  background: transparent;
+  border: none;
+  display: block;
 }

@@ -1,5 +1,4 @@
-AngularJS Collab Board
-======================
+# AngularJS Collab Board
 
 A real-time collaboration board using AngularJS and Socket.io.
 
@@ -12,6 +11,16 @@ Clone the angularjs-collab-board repository, run `npm install` to grab the depen
 Runs like a typical express app:
 
     node app.js
+    
+## Develop
+
+### Generate assets once
+
+    node_module/.bin/grunt syncAssets
+
+### Watch code changes generating assets
+
+    node_module/.bin/grunt watch
     
 ## Resources
 For more information on AngularJS please check out http://angularjs.org/

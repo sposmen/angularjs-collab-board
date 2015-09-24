@@ -1,0 +1,20 @@
+doctype html
+html(ng-app='app')
+  head
+    title AngularJS CollabBoard
+    script(src='/socket.io/socket.io.js')
+    script(src='//code.jquery.com/jquery-1.8.3.js')
+    script(src='//code.jquery.com/ui/1.9.2/jquery-ui.js')
+    script(src='//ajax.googleapis.com/ajax/libs/angularjs/1.0.3/angular.min.js')
+    script(src='/js/app.js')
+    link(href='//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css', rel='stylesheet')
+    link(rel='stylesheet', href='/css/app.css')
+  body(ng-controller='MainCtrl')
+    .navbar.navbar-inverse
+      .navbar-inner
+        a.brand(href='#') AngularJS CollabBoard
+        button#createButton.btn.btn-info.pull-right(ng-click='createNote()') Create Note
+    .alert.alert-block.sticky-note(sticky-note='', ng-repeat='note in notes', note='note', ondelete='deleteNote(id)')
+      button.close(type='button', ng-click='deleteNote(note.id)') ×
+      input.title(ng-model='note.title', ng-change='updateNote(note)', type='text')
+      textarea.body(ng-model='note.body', ng-change='updateNote(note)') {{note.body}}
