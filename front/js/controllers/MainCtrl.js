@@ -1,46 +1,53 @@
-function MainCtrl($scope, socketConnector) {
+function MainCtrl($scope, $stateParams, socketConnector) {
+  this.$scope = $scope;
+  this.$stateParams = $stateParams;
+  this.socketConnector = socketConnector;
+  var self = this;
   $scope.notes = {};
 
   // Incoming
-  socketConnector.on('onNoteCreated', function (data) {
-    $scope.notes[data.id] = data;
+  //this.initSocket();
+
+  this.socketConnector.on('onNoteCreated', function (data) {
+    self.$scope.notes[data.id] = data;
   });
 
-  socketConnector.on('onNoteDeleted', function (data) {
-    $scope.handleDeletedNoted(data.id);
+  this.socketConnector.on('onNoteDeleted', function (data) {
+    delete self.$scope.notes[data.id];
   });
 
-  socketConnector.on('onCurrentNotes', function (data) {
-    for(var note in data){
-      $scope.notes[note] = data[note];
+  this.socketConnector.on('onCurrentNotes', function (data) {
+    for (var note in data) {
+      self.$scope.notes[note] = data[note];
     }
   });
 
-
   // Outgoing
-  $scope.createNote = function () {
+  this.$scope.createNote = function () {
     var note = {
       id: new Date().getTime(),
       title: 'New Note',
       body: 'Pending'
     };
 
-    $scope.notes[note.id] = note;
-    socketConnector.emit('createNote', note );
+    self.$scope.notes[note.id] = note;
+    self.socketConnector.emit('createNote', note);
   };
 
-  $scope.deleteNote = function (id) {
-    $scope.handleDeletedNoted(id);
+  this.$scope.deleteNote = function (id) {
+    delete self.$scope.notes[id];
 
-    socketConnector.emit('deleteNote', {id: id});
+    self.socketConnector.emit('deleteNote', {id: id});
   };
-
-  $scope.handleDeletedNoted = function (id) {
-    delete $scope.notes[id];
-  }
 }
 
-MainCtrl.$inject = ['$scope', 'socketConnector'];
+MainCtrl.prototype.initSocket = function () {
+
+
+};
+
+
+MainCtrl.$inject = ['$scope', '$stateParams', 'socketConnector'];
 
 
 app.controller('MainCtrl', MainCtrl);

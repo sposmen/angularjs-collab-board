@@ -24,6 +24,25 @@ function StickyNoteDirective(socketConnector) {
         element.animate(data.position);
       }
     });
+    
+    socketConnector.on('onNoteUpdated', function (data) {
+      // Update if the same note
+      if (data.id == scope.note.id) {
+        scope.note.title = data.title;
+        scope.note.body = data.body;
+      }
+    });
+
+    // Outgoing
+    scope.updateNote = function (note) {
+      socketConnector.emit('updateNote', note);
+    };
+
+    scope.deleteNote = function (id) {
+      scope.ondelete({
+        id: id
+      });
+    };
 
     // Some DOM initiation to make it nice
     element.css('left', '10px');
@@ -33,24 +52,7 @@ function StickyNoteDirective(socketConnector) {
 
   var controller = function ($scope) {
     // Incoming
-    socketConnector.on('onNoteUpdated', function (data) {
-      // Update if the same note
-      if (data.id == $scope.note.id) {
-        $scope.note.title = data.title;
-        $scope.note.body = data.body;
-      }
-    });
-
-    // Outgoing
-    $scope.updateNote = function (note) {
-      socketConnector.emit('updateNote', note);
-    };
-
-    $scope.deleteNote = function (id) {
-      $scope.ondelete({
-        id: id
-      });
-    };
+    
   };
 
   return {

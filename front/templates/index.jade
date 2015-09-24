@@ -3,11 +3,12 @@ html(ng-app='app')
   head
     title Sticky Notes
     script(src='/socket.io/socket.io.js')
-    script(src='//code.jquery.com/jquery-1.11.3.min.js')
-    script(src='//code.jquery.com/ui/1.11.4/jquery-ui.min.js')
-    script(src='//ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js')
+    script(src='/js/dependencies/jquery-1.11.3.min.js')
+    script(src='/js/dependencies/jquery-ui.min.js')
+    script(src='/js/dependencies/angular.min.js')
+    script(src='/js/dependencies/angular-ui-router.min.js')
     script(src='/js/app.js')
-    link(href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css", rel="stylesheet" integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc= sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous")
+    link(href="/css/dependencies/bootstrap.min.css", rel="stylesheet")
     link(rel='stylesheet', href='/css/app.css')
   body(ng-controller='MainCtrl')
     .navbar.navbar-inverse

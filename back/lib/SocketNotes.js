@@ -23,6 +23,7 @@ SocketNotes.prototype.onConnection = function (socket) {
   });
 
   socket.on('updateNote', function (data) {
+    console.log(data);
     self.notes.updateNote(data, function () {
       socket.broadcast.emit('onNoteUpdated', data);
     });

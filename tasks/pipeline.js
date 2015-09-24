@@ -6,10 +6,10 @@ var jsFilesToInject = [
 
   // All of the rest of your client-side js files
   // will be injected here in no particular order.
+  'front/js/Config.js',
   'front/js/app.js',
   'front/js/factories/*.js',
   'front/js/directives/*.js',
-  'front/js/controllers/app.js',
   'front/js/controllers/*.js'
 ];
 
