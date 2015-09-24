@@ -1,14 +1,21 @@
 function MainCtrl($scope, socketConnector) {
-  $scope.notes = [];
+  $scope.notes = {};
 
   // Incoming
   socketConnector.on('onNoteCreated', function (data) {
-    $scope.notes.push(data);
+    $scope.notes[data.id] = data;
   });
 
   socketConnector.on('onNoteDeleted', function (data) {
     $scope.handleDeletedNoted(data.id);
   });
+
+  socketConnector.on('onCurrentNotes', function (data) {
+    for(var note in data){
+      $scope.notes[note] = data[note];
+    }
+  });
+
 
   // Outgoing
   $scope.createNote = function () {
@@ -18,8 +25,8 @@ function MainCtrl($scope, socketConnector) {
       body: 'Pending'
     };
 
-    $scope.notes.push(note);
-    socketConnector.emit('createNote', note);
+    $scope.notes[note.id] = note;
+    socketConnector.emit('createNote', note );
   };
 
   $scope.deleteNote = function (id) {
@@ -29,14 +36,7 @@ function MainCtrl($scope, socketConnector) {
   };
 
   $scope.handleDeletedNoted = function (id) {
-    var oldNotes = $scope.notes,
-      newNotes = [];
-
-    angular.forEach(oldNotes, function (note) {
-      if (note.id !== id) newNotes.push(note);
-    });
-
-    $scope.notes = newNotes;
+    delete $scope.notes[id];
   }
 }
 

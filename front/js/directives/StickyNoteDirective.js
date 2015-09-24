@@ -1,22 +1,27 @@
 function StickyNoteDirective(socketConnector) {
   var linker = function (scope, element, attrs) {
+
+    if (scope.note.position) {
+      element.animate(scope.note.position);
+    }
+
     element.draggable({
       stop: function (event, ui) {
+        scope.note.position = {left: ui.position.left, top: ui.position.top};
+
         socketConnector.emit('moveNote', {
           id: scope.note.id,
-          x: ui.position.left,
-          y: ui.position.top
+          position: scope.note.position
         });
       }
     });
 
     socketConnector.on('onNoteMoved', function (data) {
       // Update if the same note
+
       if (data.id == scope.note.id) {
-        element.animate({
-          left: data.x,
-          top: data.y
-        });
+        scope.position = data.position;
+        element.animate(data.position);
       }
     });
 

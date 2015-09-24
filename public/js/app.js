@@ -28,23 +28,28 @@ SocketFactory.$inject = ['$rootScope'];
 app.factory('socketConnector', SocketFactory);
 function StickyNoteDirective(socketConnector) {
   var linker = function (scope, element, attrs) {
+
+    if (scope.note.position) {
+      element.animate(scope.note.position);
+    }
+
     element.draggable({
       stop: function (event, ui) {
+        scope.note.position = {left: ui.position.left, top: ui.position.top};
+
         socketConnector.emit('moveNote', {
           id: scope.note.id,
-          x: ui.position.left,
-          y: ui.position.top
+          position: scope.note.position
         });
       }
     });
 
     socketConnector.on('onNoteMoved', function (data) {
       // Update if the same note
+
       if (data.id == scope.note.id) {
-        element.animate({
-          left: data.x,
-          top: data.y
-        });
+        scope.position = data.position;
+        element.animate(data.position);
       }
     });
 
@@ -91,16 +96,23 @@ StickyNoteDirective.$inject = ['socketConnector'];
 
 app.directive('stickyNote', StickyNoteDirective);
 function MainCtrl($scope, socketConnector) {
-  $scope.notes = [];
+  $scope.notes = {};
 
   // Incoming
   socketConnector.on('onNoteCreated', function (data) {
-    $scope.notes.push(data);
+    $scope.notes[data.id] = data;
   });
 
   socketConnector.on('onNoteDeleted', function (data) {
     $scope.handleDeletedNoted(data.id);
   });
+
+  socketConnector.on('onCurrentNotes', function (data) {
+    for(var note in data){
+      $scope.notes[note] = data[note];
+    }
+  });
+
 
   // Outgoing
   $scope.createNote = function () {
@@ -110,8 +122,8 @@ function MainCtrl($scope, socketConnector) {
       body: 'Pending'
     };
 
-    $scope.notes.push(note);
-    socketConnector.emit('createNote', note);
+    $scope.notes[note.id] = note;
+    socketConnector.emit('createNote', note );
   };
 
   $scope.deleteNote = function (id) {
@@ -121,14 +133,7 @@ function MainCtrl($scope, socketConnector) {
   };
 
   $scope.handleDeletedNoted = function (id) {
-    var oldNotes = $scope.notes,
-      newNotes = [];
-
-    angular.forEach(oldNotes, function (note) {
-      if (note.id !== id) newNotes.push(note);
-    });
-
-    $scope.notes = newNotes;
+    delete $scope.notes[id];
   }
 }
 
