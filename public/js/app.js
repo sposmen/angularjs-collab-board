@@ -98,6 +98,10 @@ app.directive('stickyNote', StickyNoteDirective);
 function MainCtrl($scope, socketConnector) {
   $scope.notes = {};
 
+  $scope.styles = {
+    background: "url(/images/bg_corkboard.jpg) top left repeat fixed"
+  };
+
   // Incoming
   socketConnector.on('onNoteCreated', function (data) {
     $scope.notes[data.id] = data;

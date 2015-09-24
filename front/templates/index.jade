@@ -9,7 +9,7 @@ html(ng-app='app')
     script(src='/js/app.js')
     link(href='//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css', rel='stylesheet')
     link(rel='stylesheet', href='/css/app.css')
-  body(ng-controller='MainCtrl')
+  body(ng-controller='MainCtrl', ng-style="styles")
     .navbar.navbar-inverse
       .navbar-inner
         a.brand(href='#') Sticky Notes
