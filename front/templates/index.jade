@@ -10,7 +10,7 @@ html(ng-app='app')
     script(src='/js/app.js')
     link(href="/css/dependencies/bootstrap.min.css", rel="stylesheet")
     link(rel='stylesheet', href='/css/app.css')
-  body(ng-controller='MainCtrl')
+  body(ng-controller='MainCtrl', ng-style="styles")
     .navbar.navbar-inverse
       .navbar-header
         a.navbar-brand(href='#') Sticky Notes

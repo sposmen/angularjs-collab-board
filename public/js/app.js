@@ -58,6 +58,10 @@ function MainCtrl($scope, $stateParams, socketConnector) {
   this.socketConnector = socketConnector;
   this.$scope.notes = {};
 
+  $scope.styles = {
+    background: "url(/images/bg_corkboard.jpg) top left repeat fixed"
+  };
+
   // Incoming
   this.initSocket();
 
