@@ -41,87 +41,34 @@ function SocketFactory($rootScope) {
 SocketFactory.$inject = ['$rootScope'];
 
 app.factory('socketConnector', SocketFactory);
-function StickyNoteDirective(socketConnector) {
-  var linker = function (scope, element, attrs) {
-
-    if (scope.note.position) {
-      element.animate(scope.note.position);
-    }
-
-    element.draggable({
-      stop: function (event, ui) {
-        scope.note.position = {left: ui.position.left, top: ui.position.top};
-
-        socketConnector.emit('moveNote', {
-          id: scope.note.id,
-          position: scope.note.position
-        });
-      }
-    });
-
-    socketConnector.on('onNoteMoved', function (data) {
-      // Update if the same note
-
-      if (data.id == scope.note.id) {
-        scope.position = data.position;
-        element.animate(data.position);
-      }
-    });
-    
-    socketConnector.on('onNoteUpdated', function (data) {
-      // Update if the same note
-      if (data.id == scope.note.id) {
-        scope.note.title = data.title;
-        scope.note.body = data.body;
-      }
-    });
-
-    // Outgoing
-    scope.updateNote = function (note) {
-      socketConnector.emit('updateNote', note);
-    };
-
-    scope.deleteNote = function (id) {
-      scope.ondelete({
-        id: id
-      });
-    };
-
-    // Some DOM initiation to make it nice
-    element.css('left', '10px');
-    element.css('top', '50px');
-    element.hide().fadeIn();
-  };
-
-  var controller = function ($scope) {
-    // Incoming
-    
-  };
-
+function StickyNoteDirective() {
   return {
     restrict: 'A',
-    link: linker,
-    controller: controller,
-    scope: {
-      note: '=',
-      ondelete: '&'
-    }
+    controller: 'StickyNoteCtrl'
   };
 }
 
-StickyNoteDirective.$inject = ['socketConnector'];
 
 app.directive('stickyNote', StickyNoteDirective);
 function MainCtrl($scope, $stateParams, socketConnector) {
+  var self = this;
+
   this.$scope = $scope;
   this.$stateParams = $stateParams;
   this.socketConnector = socketConnector;
-  var self = this;
-  $scope.notes = {};
+  this.$scope.notes = {};
 
   // Incoming
-  //this.initSocket();
+  this.initSocket();
 
+  // Outgoing
+  this.$scope.createNote = function(){ self.createNote() };
+
+  this.$scope.deleteNote = function(){ self.deleteNote() };
+}
+
+MainCtrl.prototype.initSocket = function () {
+  var self = this;
   this.socketConnector.on('onNoteCreated', function (data) {
     self.$scope.notes[data.id] = data;
   });
@@ -131,37 +78,107 @@ function MainCtrl($scope, $stateParams, socketConnector) {
   });
 
   this.socketConnector.on('onCurrentNotes', function (data) {
-    for (var note in data) {
-      self.$scope.notes[note] = data[note];
+    var note;
+    for (note in data) {
+      if(data.hasOwnProperty(note))
+        self.$scope.notes[note] = data[note];
     }
   });
-
-  // Outgoing
-  this.$scope.createNote = function () {
-    var note = {
-      id: new Date().getTime(),
-      title: 'New Note',
-      body: 'Pending'
-    };
-
-    self.$scope.notes[note.id] = note;
-    self.socketConnector.emit('createNote', note);
-  };
-
-  this.$scope.deleteNote = function (id) {
-    delete self.$scope.notes[id];
-
-    self.socketConnector.emit('deleteNote', {id: id});
-  };
-}
-
-MainCtrl.prototype.initSocket = function () {
-
-
 };
+
+MainCtrl.prototype.createNote = function(){
+  var note = {
+    id: new Date().getTime(),
+    title: 'New Note',
+    body: 'Pending'
+  };
+
+  this.$scope.notes[note.id] = note;
+  this.socketConnector.emit('createNote', note);
+};
+
+MainCtrl.prototype.deleteNote = function (id) {
+  delete self.$scope.notes[id];
+
+  self.socketConnector.emit('deleteNote', {id: id});
+};
+
+
 
 
 MainCtrl.$inject = ['$scope', '$stateParams', 'socketConnector'];
 
 
 app.controller('MainCtrl', MainCtrl);
+function StickyNoteCtrl($scope, $element, socketConnector) {
+  var self = this;
+
+  this.scope = $scope;
+  this.note = $scope.note;
+  this.element = $element;
+  this.socket = socketConnector;
+
+  this.setDraggable();
+
+  this.socket.on('onNoteMoved', function (data) {
+    self.onNoteMoved(data);
+  });
+
+  this.socket.on('onNoteUpdated', function (data) {
+    self.onNoteUpdated(data);
+  });
+
+  // Outgoing
+  this.scope.updateNote = function () {
+    self.updateNote();
+  };
+
+  // Some DOM initiation to make it nice
+  this.element.css('left', '10px');
+  this.element.css('top', '50px');
+  this.element.hide().fadeIn(400, function () {
+    self.animate();
+  });
+}
+
+StickyNoteCtrl.prototype.animate = function () {
+  if (this.note.position) {
+    this.element.animate(this.note.position);
+  }
+};
+
+StickyNoteCtrl.prototype.setDraggable = function () {
+  var self = this;
+  this.element.draggable({
+    stop: function (event, ui) {
+      self.note.position = {left: ui.position.left, top: ui.position.top};
+
+      self.socket.emit('moveNote', {
+        id: self.note.id,
+        position: self.note.position
+      });
+    }
+  });
+};
+
+StickyNoteCtrl.prototype.onNoteMoved = function (data) {
+  if (data.id == this.note.id) {
+    this.note.position = data.position;
+    this.animate()
+  }
+};
+
+StickyNoteCtrl.prototype.onNoteUpdated = function (data) {
+  if (data.id == this.note.id) {
+    this.note.title = data.title;
+    this.note.body = data.body;
+  }
+};
+
+StickyNoteCtrl.prototype.updateNote = function () {
+  this.socket.emit('updateNote', this.note);
+};
+
+StickyNoteCtrl.$inject = ['$scope', '$element', 'socketConnector'];
+
+app.controller('StickyNoteCtrl', StickyNoteCtrl);

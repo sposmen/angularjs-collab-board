@@ -1,13 +1,22 @@
 function MainCtrl($scope, $stateParams, socketConnector) {
+  var self = this;
+
   this.$scope = $scope;
   this.$stateParams = $stateParams;
   this.socketConnector = socketConnector;
-  var self = this;
-  $scope.notes = {};
+  this.$scope.notes = {};
 
   // Incoming
-  //this.initSocket();
+  this.initSocket();
 
+  // Outgoing
+  this.$scope.createNote = function(){ self.createNote() };
+
+  this.$scope.deleteNote = function(){ self.deleteNote() };
+}
+
+MainCtrl.prototype.initSocket = function () {
+  var self = this;
   this.socketConnector.on('onNoteCreated', function (data) {
     self.$scope.notes[data.id] = data;
   });
@@ -17,34 +26,32 @@ function MainCtrl($scope, $stateParams, socketConnector) {
   });
 
   this.socketConnector.on('onCurrentNotes', function (data) {
-    for (var note in data) {
-      self.$scope.notes[note] = data[note];
+    var note;
+    for (note in data) {
+      if(data.hasOwnProperty(note))
+        self.$scope.notes[note] = data[note];
     }
   });
-
-  // Outgoing
-  this.$scope.createNote = function () {
-    var note = {
-      id: new Date().getTime(),
-      title: 'New Note',
-      body: 'Pending'
-    };
-
-    self.$scope.notes[note.id] = note;
-    self.socketConnector.emit('createNote', note);
-  };
-
-  this.$scope.deleteNote = function (id) {
-    delete self.$scope.notes[id];
-
-    self.socketConnector.emit('deleteNote', {id: id});
-  };
-}
-
-MainCtrl.prototype.initSocket = function () {
-
-
 };
+
+MainCtrl.prototype.createNote = function(){
+  var note = {
+    id: new Date().getTime(),
+    title: 'New Note',
+    body: 'Pending'
+  };
+
+  this.$scope.notes[note.id] = note;
+  this.socketConnector.emit('createNote', note);
+};
+
+MainCtrl.prototype.deleteNote = function (id) {
+  delete self.$scope.notes[id];
+
+  self.socketConnector.emit('deleteNote', {id: id});
+};
+
+
 
 
 MainCtrl.$inject = ['$scope', '$stateParams', 'socketConnector'];

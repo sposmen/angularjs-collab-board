@@ -16,7 +16,7 @@ html(ng-app='app')
         a.navbar-brand(href='#') Sticky Notes
       .collapse.navbar-collapse
         button.btn.btn-default.navbar-btn(ng-click='createNote()') Create Note
-    .alert.alert-warning.sticky-note(sticky-note='', ng-repeat='(id, note) in notes', note='note', ondelete='deleteNote(id)')
+    .alert.alert-warning.sticky-note(sticky-note='', ng-repeat='(id, note) in notes')
       button.close(type='button', ng-click='deleteNote(note.id)') ×
       input.title(ng-model='note.title', ng-change='updateNote(note)', type='text')
       textarea.body(ng-model='note.body', ng-change='updateNote(note)') {{note.body}}
