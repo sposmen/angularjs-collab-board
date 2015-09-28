@@ -14,7 +14,7 @@ html(ng-app='app')
     .navbar.navbar-inverse
       .navbar-header
         a.navbar-brand(href='#') Sticky Notes
-      .collapse.navbar-collapse
+      .container
         button.btn.btn-default.navbar-btn(ng-click='createNote()') Create Note
     .alert.alert-warning.sticky-note(sticky-note='', ng-repeat='(id, note) in notes')
       button.close(type='button', ng-click='deleteNote(note.id)') ×

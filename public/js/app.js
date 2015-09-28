@@ -68,7 +68,7 @@ function MainCtrl($scope, $stateParams, socketConnector) {
   // Outgoing
   this.$scope.createNote = function(){ self.createNote() };
 
-  this.$scope.deleteNote = function(){ self.deleteNote() };
+  this.$scope.deleteNote = function(){ self.deleteNote.apply(self, arguments) };
 }
 
 MainCtrl.prototype.initSocket = function () {
@@ -102,9 +102,9 @@ MainCtrl.prototype.createNote = function(){
 };
 
 MainCtrl.prototype.deleteNote = function (id) {
-  delete self.$scope.notes[id];
+  delete this.$scope.notes[id];
 
-  self.socketConnector.emit('deleteNote', {id: id});
+  this.socketConnector.emit('deleteNote', {id: id});
 };
 
 
