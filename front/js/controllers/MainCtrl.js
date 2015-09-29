@@ -22,28 +22,28 @@ function MainCtrl($scope, $stateParams, $state, socketConnector) {
     self.createNote()
   };
 
-  this.$scope.deleteNote = function () {
-    self.deleteNote.apply(self, arguments)
+  this.$scope.deleteNote = function (data) {
+    self.deleteNote(data)
   };
 }
 
 MainCtrl.prototype.initSocket = function () {
   var self = this;
   this.socketConnector.on('onNoteCreated', function (data) {
-    if(self.board == data.board)
+    if (self.board == data.board)
       self.$scope.notes[data.id] = data;
   });
 
   this.socketConnector.on('onNoteDeleted', function (data) {
-    delete self.$scope.notes[data.id];
+    if (self.$scope.notes.hasOwnProperty(data.id)) {
+      delete self.$scope.notes[data.id];
+    }
   });
 
   this.socketConnector.on('onCurrentNotes', function (data) {
-    var note;
-    for (note in data) {
-      if (data.hasOwnProperty(note))
-        self.$scope.notes[note] = data[note];
-    }
+    data.forEach(function(note){
+      self.$scope.notes[note.id] = note;
+    });
   });
 };
 
@@ -62,7 +62,6 @@ MainCtrl.prototype.createNote = function () {
 
 MainCtrl.prototype.deleteNote = function (id) {
   delete this.$scope.notes[id];
-
   this.socketConnector.emit('deleteNote', {id: id});
 };
 

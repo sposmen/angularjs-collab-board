@@ -64,7 +64,11 @@ StickyNoteCtrl.prototype.onNoteUpdated = function (data) {
 };
 
 StickyNoteCtrl.prototype.updateNote = function () {
-  this.socket.emit('updateNote', this.note);
+  this.socket.emit('updateNote', {
+    id: this.note.id,
+    title: this.note.title,
+    body: this.note.body
+  });
 };
 
 StickyNoteCtrl.$inject = ['$scope', '$element', 'socketConnector'];
