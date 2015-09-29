@@ -14,10 +14,6 @@ var jsFilesToInject = [
 ];
 
 
-var jadeFilesToInject = [
-  'front/templates/**/*.jade'
-];
-
 
 // Prefix relative paths to source files so they point to the proper locations
 // (i.e. where the other Grunt tasks spit them out, or in some cases, where
@@ -25,5 +21,4 @@ var jadeFilesToInject = [
 module.exports = {
   cssFilesToInject: cssFilesToInject,
   jsFilesToInject: jsFilesToInject,
-  jadeFilesToInject: jadeFilesToInject
 };

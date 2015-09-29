@@ -85,8 +85,7 @@ function MainCtrl($scope, $stateParams, $state, socketConnector) {
 MainCtrl.prototype.initSocket = function () {
   var self = this;
   this.socketConnector.on('onNoteCreated', function (data) {
-    if (self.board == data.board)
-      self.$scope.notes[data.id] = data;
+    self.$scope.notes[data.id] = data;
   });
 
   this.socketConnector.on('onNoteDeleted', function (data) {
@@ -103,16 +102,7 @@ MainCtrl.prototype.initSocket = function () {
 };
 
 MainCtrl.prototype.createNote = function () {
-
-  var note = {
-    id: new Date().getTime(),
-    title: 'New Note',
-    body: 'Pending',
-    board: this.board
-  };
-
-  this.$scope.notes[note.id] = note;
-  this.socketConnector.emit('createNote', note);
+  this.socketConnector.emit('createNote');
 };
 
 MainCtrl.prototype.deleteNote = function (id) {

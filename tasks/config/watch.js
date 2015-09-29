@@ -15,14 +15,9 @@
 module.exports = function (grunt) {
 
   grunt.config.set('watch', {
-    back: {
-      files: ['back/**/*.js', '!**/node_modules/**']
-    },
     front: {
-
       // Assets to watch:
       files: ['front/**/*', 'tasks/pipeline.js', '!**/node_modules/**'],
-
       // When assets are changed:
       tasks: ['syncAssets']
     }
