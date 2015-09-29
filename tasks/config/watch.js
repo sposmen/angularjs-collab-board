@@ -16,7 +16,7 @@ module.exports = function (grunt) {
 
   grunt.config.set('watch', {
     back: {
-      files: ['back/**/*', '!**/node_modules/**']
+      files: ['back/**/*.js', '!**/node_modules/**']
     },
     front: {
 

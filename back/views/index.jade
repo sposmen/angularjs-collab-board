@@ -2,21 +2,22 @@ doctype html
 html(ng-app='app')
   head
     title Sticky Notes
-    script(src='/socket.io/socket.io.js')
-    script(src='/js/dependencies/jquery-1.11.3.min.js')
-    script(src='/js/dependencies/jquery-ui.min.js')
-    script(src='/js/dependencies/angular.min.js')
-    script(src='/js/dependencies/angular-ui-router.min.js')
-    script(src='/js/app.js')
     link(href="/css/dependencies/bootstrap.min.css", rel="stylesheet")
     link(rel='stylesheet', href='/css/app.css')
   body(ng-controller='MainCtrl', ng-style="styles")
     .navbar.navbar-inverse
       .navbar-header
-        a.navbar-brand(href='#') Sticky Notes
+        a.navbar-brand(href='#')= title
       .container
         button.btn.btn-default.navbar-btn(ng-click='createNote()') Create Note
     .alert.alert-warning.sticky-note(sticky-note='', ng-repeat='(id, note) in notes')
       button.close(type='button', ng-click='deleteNote(note.id)') ×
       input.title(ng-model='note.title', ng-change='updateNote(note)', type='text')
       textarea.body(ng-model='note.body', ng-change='updateNote(note)') {{note.body}}
+
+    script(src='/socket.io/socket.io.js')
+    script(src='/js/dependencies/jquery-1.11.3.min.js')
+    script(src='/js/dependencies/jquery-ui.min.js')
+    script(src='/js/dependencies/angular.min.js')
+    script(src='/js/dependencies/angular-ui-router.min.js')
+    script(src='/js/app.js')

@@ -1,10 +1,13 @@
 function Config($stateProvider, $urlRouterProvider, $locationProvider) {
-  $locationProvider.html5Mode(true);
+  $locationProvider.html5Mode({
+    enabled: true,
+    requireBase: false
+  });
   $urlRouterProvider.otherwise('/');
   $stateProvider.state('home', {
     url: '/'
-  }).state('stickynotes', {
-    url: "/{id}"
+  }).state('board', {
+    url: "/board/:boardId"
   });
 }
 

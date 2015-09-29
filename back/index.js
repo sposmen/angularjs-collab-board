@@ -1,14 +1,18 @@
-var express = require('express'),
+var path = require('path'),
+  express = require('express'),
   app = express(),
   server = require('http').createServer(app),
-  Notes = require('./model/Notes'),
-  notes = new Notes(),
-  SocketNotes = require('./lib/SocketNotes'),
-  socketNotes = new SocketNotes(server);
+  Notes = require('./models/Note'),
+  NotesController = require('./controllers/NotesController'),
+  notesController = new NotesController(server),
+  index = require('./routes/index');
+
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
 
 app.use(express.static(__dirname + '/../public'));
 
-socketNotes.registerNotes(notes);
+app.use('/', index);
 
 server.listen(1337);
 
