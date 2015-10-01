@@ -68,5 +68,5 @@ MainCtrl.prototype.checkBoard = function () {
 
 MainCtrl.$inject = ['$scope', '$stateParams', '$state', 'socketConnector'];
 
-
-app.controller('MainCtrl', MainCtrl);
+angular.module('stickyApp.controllers')
+  .controller('MainCtrl', MainCtrl);

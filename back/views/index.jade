@@ -1,5 +1,5 @@
 doctype html
-html(ng-app='app')
+html(ng-app='stickyApp')
   head
     title Sticky Notes
     link(href="/css/dependencies/bootstrap.min.css", rel="stylesheet")
@@ -10,8 +10,8 @@ html(ng-app='app')
         a.navbar-brand(href='#')= title
       .container
         button.btn.btn-default.navbar-btn(ng-click='createNote()') Create Note
-    .alert.alert-warning.sticky-note(sticky-note='', ng-repeat='(id, note) in notes')
-      button.close(type='button', ng-click='deleteNote(note.id)') ×
+    .alert.alert-warning.sticky-note(sticky-note='', resizable='', r-directions="['right', 'bottom']", ng-repeat='(id, note) in notes')
+      span.glyphicon.glyphicon-trash.delete-btn(ng-click='deleteNote(note.id)', aria-hidden="true")
       input.title(ng-model='note.title', ng-change='updateNote(note)', type='text')
       textarea.body(ng-model='note.body', ng-change='updateNote(note)') {{note.body}}
 

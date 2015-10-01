@@ -6,6 +6,10 @@ function StickyNoteCtrl($scope, $element, socketConnector) {
   this.element = $element;
   this.socket = socketConnector;
 
+  this.scope.$on('angular-resizable.resizeEnd', function(event, info){
+    console.log(info);
+  });
+
   this.setDraggable();
 
   this.socket.on('onNoteMoved', function (data) {
@@ -73,4 +77,5 @@ StickyNoteCtrl.prototype.updateNote = function () {
 
 StickyNoteCtrl.$inject = ['$scope', '$element', 'socketConnector'];
 
-app.controller('StickyNoteCtrl', StickyNoteCtrl);
+angular.module('stickyApp.directives.controllers', ['stickyApp.factories'])
+  .controller('StickyNoteCtrl', StickyNoteCtrl);

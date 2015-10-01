@@ -5,5 +5,5 @@ function StickyNoteDirective() {
   };
 }
 
-
-app.directive('stickyNote', StickyNoteDirective);
+angular.module('stickyApp.directives')
+  .directive('stickyNote', StickyNoteDirective);

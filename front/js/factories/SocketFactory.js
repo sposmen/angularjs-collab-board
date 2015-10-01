@@ -1,4 +1,4 @@
-function SocketFactory($rootScope) {
+function SocketConnectorFactory($rootScope) {
   var socket = io.connect();
   return {
     on: function (eventName, callback) {
@@ -22,6 +22,7 @@ function SocketFactory($rootScope) {
   };
 }
 
-SocketFactory.$inject = ['$rootScope'];
+SocketConnectorFactory.$inject = ['$rootScope'];
 
-app.factory('socketConnector', SocketFactory);
+angular.module('stickyApp.factories')
+  .factory('socketConnector', SocketConnectorFactory);
