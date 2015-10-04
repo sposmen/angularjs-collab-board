@@ -418,18 +418,15 @@ function StickyNoteCtrl($scope, $element, socketConnector) {
 
   this.scope = $scope;
   this.note = $scope.note;
+  this.oldNote = _.clone(this.note);
   this.element = $element;
   this.socket = socketConnector;
 
-  this.scope.$on('angular-resizable.resizeEnd', function(event, info){
+  this.scope.$on('angular-resizable.resizeEnd', function (event, info) {
     console.log(info);
   });
 
   this.setDraggable();
-
-  this.socket.on('onNoteMoved', function (data) {
-    self.onNoteMoved(data);
-  });
 
   this.socket.on('onNoteUpdated', function (data) {
     self.onNoteUpdated(data);
@@ -459,35 +456,47 @@ StickyNoteCtrl.prototype.setDraggable = function () {
   this.element.draggable({
     stop: function (event, ui) {
       self.note.position = {left: ui.position.left, top: ui.position.top};
-
-      self.socket.emit('moveNote', {
-        id: self.note.id,
-        position: self.note.position
-      });
+      self.updateNote();
     }
   });
 };
 
-StickyNoteCtrl.prototype.onNoteMoved = function (data) {
-  if (data.id == this.note.id) {
-    this.note.position = data.position;
-    this.animate()
+StickyNoteCtrl.prototype.onKeyChanged = {
+  position: function (data) {
+    if (data.id == this.note.id) {
+      this.animate();
+    }
   }
 };
 
 StickyNoteCtrl.prototype.onNoteUpdated = function (data) {
+  var self = this;
   if (data.id == this.note.id) {
-    this.note.title = data.title;
-    this.note.body = data.body;
+    ['title', 'body', 'position'].forEach(function (key) {
+      if (data.hasOwnProperty(key) && !_.isEqual(data[key], self.note[key])) {
+        self.note[key] = data[key];
+        if (self.onKeyChanged.hasOwnProperty(key))
+          self.onKeyChanged[key].call(self, data);
+      }
+    });
   }
+  this.oldNote = _.clone(this.note);
 };
 
 StickyNoteCtrl.prototype.updateNote = function () {
-  this.socket.emit('updateNote', {
-    id: this.note.id,
-    title: this.note.title,
-    body: this.note.body
+  this.socket.emit('updateNote', _.extend({id: this.note.id}, this.getDiff()));
+  this.oldNote = _.clone(this.note);
+};
+
+StickyNoteCtrl.prototype.getDiff = function () {
+  var self = this,
+    diff = {};
+  ['title', 'body', 'position'].forEach(function (key) {
+    if (!_.isEqual(self.oldNote[key], self.note[key])) {
+      diff[key] = self.note[key];
+    }
   });
+  return diff;
 };
 
 StickyNoteCtrl.$inject = ['$scope', '$element', 'socketConnector'];

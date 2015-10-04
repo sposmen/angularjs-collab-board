@@ -16,7 +16,8 @@ NotesController.prototype.onConnection = function (socket) {
     Note({
       title: 'New Note',
       body: 'Pending',
-      board: socket.currentBoard
+      board: socket.currentBoard,
+      position: {left: 10, top: 50}
     }).save()
       .then(function (note) {
         socket.emit('onNoteCreated', note);
@@ -27,12 +28,6 @@ NotesController.prototype.onConnection = function (socket) {
   socket.on('updateNote', function (data) {
     Note.get(data.id).update(data).run().then(function () {
       socket.broadcast.to(socket.currentBoard).emit('onNoteUpdated', data);
-    });
-  });
-
-  socket.on('moveNote', function (data) {
-    Note.get(data.id).update(data).run().then(function () {
-      socket.broadcast.to(socket.currentBoard).emit('onNoteMoved', data);
     });
   });
 
