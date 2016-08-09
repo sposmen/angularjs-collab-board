@@ -3,6 +3,7 @@ angular.module('stickyApp.controllers', []);
 angular.module('stickyApp.factories', []);
 
 angular.module('stickyApp.directives.controllers', [
+  'angular-flippy',
   'stickyApp.factories'
 ]);
 
@@ -332,6 +333,51 @@ angular.module('stickyApp.directives')
   };
 
 })(angular);
+/**
+ * https://github.com/zwacky/angular-flippy
+ * handles the behaviour of flipping card.
+ */
+angular.module('angular-flippy', [])
+  .directive('flippy', function() {
+    return {
+      restrict: 'C',
+      link: function($scope, $elem, $attrs) {
+        $scope.flipped = false;
+        var options = {
+          flipDuration: ($attrs.flipDuration) ? $attrs.flipDuration : 400,
+          timingFunction: 'ease-in-out'
+        };
+
+        // setting flip options
+        angular.forEach(['.flippy-front', '.flippy-back'], function(name) {
+          var el = $elem.find(name);
+          if (el.length == 1) {
+            angular.forEach(['', '-ms-', '-webkit-'], function(prefix) {
+              angular.element(el[0]).css(prefix + 'transition', 'all ' + options.flipDuration/1000 + 's ' + options.timingFunction);
+            });
+          }
+        });
+
+        /**
+         * behaviour for flipping effect.
+         */
+        $scope.flip = function() {
+          $elem.toggleClass('flipped');
+          $scope.flipped = !$scope.flipped;
+        }
+
+      }
+    };
+  });
+
+
+
+
+
+
+
+
+
 function StickyNoteDirective() {
   return {
     restrict: 'A',
@@ -341,78 +387,12 @@ function StickyNoteDirective() {
 
 angular.module('stickyApp.directives')
   .directive('stickyNote', StickyNoteDirective);
-function MainCtrl($scope, $stateParams, $state, socketConnector) {
-  var self = this;
-
-  this.$scope = $scope;
-  this.$stateParams = $stateParams;
-  this.$state = $state;
-  this.socketConnector = socketConnector;
-  this.$scope.notes = {};
-  $scope.$on('$stateChangeSuccess', function () {
-    self.checkBoard();
-  });
-
-  $scope.styles = {
-    background: "url(/images/bg_corkboard.jpg) top left repeat fixed"
-  };
-
-  // Incoming
-  this.initSocket();
-
-  // Outgoing
-  this.$scope.createNote = function () {
-    self.createNote()
-  };
-
-  this.$scope.deleteNote = function (data) {
-    self.deleteNote(data)
-  };
-}
-
-MainCtrl.prototype.initSocket = function () {
-  var self = this;
-  this.socketConnector.on('onNoteCreated', function (data) {
-    self.$scope.notes[data.id] = data;
-  });
-
-  this.socketConnector.on('onNoteDeleted', function (data) {
-    if (self.$scope.notes.hasOwnProperty(data.id)) {
-      delete self.$scope.notes[data.id];
-    }
-  });
-
-  this.socketConnector.on('onCurrentNotes', function (data) {
-    data.forEach(function(note){
-      self.$scope.notes[note.id] = note;
-    });
-  });
-};
-
-MainCtrl.prototype.createNote = function () {
-  this.socketConnector.emit('createNote');
-};
-
-MainCtrl.prototype.deleteNote = function (id) {
-  delete this.$scope.notes[id];
-  this.socketConnector.emit('deleteNote', {id: id});
-};
-
-MainCtrl.prototype.checkBoard = function () {
-  if (this.$stateParams.boardId) {
-    this.board = this.$stateParams.boardId;
-    this.socketConnector.emit('getNotesFromBoard', {board: this.board});
-  } else {
-    this.board = new Date().getTime();
-    this.$state.transitionTo("board", {boardId: this.board})
-  }
-};
 
 
-MainCtrl.$inject = ['$scope', '$stateParams', '$state', 'socketConnector'];
 
-angular.module('stickyApp.controllers')
-  .controller('MainCtrl', MainCtrl);
+
+
+
 function StickyNoteCtrl($scope, $element, socketConnector) {
   var self = this;
 

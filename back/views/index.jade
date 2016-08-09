@@ -10,10 +10,13 @@ html(ng-app='stickyApp')
         a.navbar-brand(href='#')= title
       .container
         button.btn.btn-default.navbar-btn(ng-click='createNote()') Create Note
-    .alert.alert-warning.sticky-note(sticky-note='', resizable='', r-directions="['right']", ng-repeat='(id, note) in notes')
-      span.glyphicon.glyphicon-trash.delete-btn(ng-click='deleteNote(note.id)', aria-hidden="true")
-      input.title(ng-model='note.title', ng-change='updateNote(note)', type='text')
-      textarea.body(autosize='', ng-model='note.body', ng-change='updateNote(note)') {{note.body}}
+    .flippy.fancy(ng-mouseenter="flip()", flip-duration="800", timing-function="ease-in-out")
+
+      .flippy-front.alert.alert-warning.sticky-note(sticky-note='', resizable='', r-directions="['right']", ng-repeat='(id, note) in notes')
+        span.glyphicon.glyphicon-trash.delete-btn(ng-click='deleteNote(note.id)', aria-hidden="true")
+        input.title(ng-model='note.title', ng-change='updateNote(note)', type='text')
+        textarea.body(autosize='', ng-model='note.body', ng-change='updateNote(note)') {{note.body}}
+      .flippy-back Whaat
 
     script(src='/socket.io/socket.io.js')
     script(src='/js/dependencies/jquery-1.11.3.min.js')

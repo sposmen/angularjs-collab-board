@@ -11,7 +11,7 @@ function MainCtrl($scope, $stateParams, $state, socketConnector) {
   });
 
   $scope.styles = {
-    background: "url(/images/bg_corkboard.jpg) top left repeat fixed"
+    background: "#DA8543"
   };
 
   // Incoming
